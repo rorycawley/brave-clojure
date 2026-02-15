@@ -1,0 +1,58 @@
+{:linters
+ {:unused-namespace        {:level :error}
+  :unused-referred-var     {:level :error}
+  :unused-binding          {:level :error}
+  :unused-private-var      {:level :error}
+
+  :unresolved-symbol       {:level :error}
+  :namespace-name-mismatch {:level :error}
+  :refer-all               {:level :error}
+
+  :redundant-do            {:level :warning}
+  :reduce-without-init     {:level :warning}
+  :single-logical-operand  {:level :warning}
+  :shadowed-var            {:level :warning}
+
+  :missing-docstring       {:level :off}
+
+  :consistent-alias
+  {:level :warning
+   :aliases {clojure.string str
+             clojure.set    set
+             clojure.walk   walk
+             clojure.pprint pprint}}
+
+  :discouraged-var
+  {:level :warning
+   :vars
+   {clojure.core/defonce
+    {:level :error
+     :message "Avoid defonce in src. Keep it for dev-only lifecycle helpers."
+     :exclude ["^dev\\..*"]}
+
+
+    clojure.core/eval
+    {:level :error
+     :message "Avoid eval in src. Prefer data + functions."}
+
+    clojure.java.shell/sh
+    {:level :warning
+     :message "Keep shelling out at the edges (e.g. brave.adapters.shell/*)."}
+
+    clojure.java.io/reader
+    {:level :warning
+     :message "Keep IO at the edges (e.g. brave.io/*)."}
+    clojure.java.io/writer
+    {:level :warning
+     :message "Keep IO at the edges (e.g. brave.io/*)."}
+
+    clojure.core/atom
+    {:level :warning
+     :message "Prefer passing state explicitly; if state is needed, isolate it at the edges."}}}}
+
+ :config-in-comment
+ {:linters {:refer-all {:level :error}}}
+
+ :output
+ {:exclude-files ["target/"]}}
+

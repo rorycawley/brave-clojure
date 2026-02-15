@@ -1,0 +1,16 @@
+[tools]
+java = "21"
+clojure = "latest"
+babashka = "latest"
+clj-kondo = "latest"
+cljstyle = "latest"
+
+
+[env]
+JAVA_TOOL_OPTIONS = """
+-Dorg.slf4j.simpleLogger.defaultLogLevel=info
+-Dorg.slf4j.simpleLogger.showDateTime=true
+-Dorg.slf4j.simpleLogger.dateTimeFormat=HH:mm:ss.SSS
+-Dorg.slf4j.simpleLogger.showThreadName=true
+-Xms128m -Xmx1024m
+"""

@@ -1,0 +1,20 @@
+{:paths ["src" "resources"]
+
+ :deps
+ {org.clojure/clojure {:mvn/version "1.12.3"}}
+
+ :aliases
+ {:dev
+  {:extra-paths ["dev" "test" "notebooks"]
+   :extra-deps {org.clojure/tools.namespace {:mvn/version "1.5.0"}
+                org.slf4j/slf4j-simple {:mvn/version "2.0.16"}}
+   :jvm-opts ["-Dclojure.main.report=stderr"]}
+
+  :test
+  {:extra-paths ["test"]
+   :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+   :main-opts  ["-m" "kaocha.runner"]}
+
+  :clerk
+  {:extra-paths ["notebooks"]
+   :extra-deps {io.github.nextjournal/clerk {:mvn/version "0.16.1016"}}}}}

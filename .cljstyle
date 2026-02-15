@@ -1,0 +1,2 @@
+{:style :community
+ :paths ["src" "dev" "test" "notebooks"]}

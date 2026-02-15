@@ -1,0 +1,98 @@
+{:tasks
+ {:requires ([babashka.fs :as fs]
+             [babashka.process :as p])
+
+  :init (do
+          (defn sh!
+            "Run a command and stream stdout/stderr. Throws on non-zero."
+            [& args]
+            (let [res (apply p/shell {:inherit true} args)]
+              (when-not (zero? (:exit res))
+                (throw (ex-info (str "Command failed: " (pr-str args))
+                         {:exit (:exit res)})))
+              res))
+
+          (defn ensure-dirs! []
+            (doseq [d ["src" "dev" "test" "notebooks"]]
+              (when-not (fs/exists? d)
+                (println "Missing required folder:" d)
+                (System/exit 2))))
+
+          ;; Always run tools using mise’s pinned versions
+          (defn mise! [& cmd]
+            (apply sh! "mise" "exec" "--" cmd)))
+
+  build
+  {:doc "Build = format check + lint + test + clerk export"
+   :task (do
+           (run 'check)
+           (run 'clerk-export))}
+
+
+
+  fmt
+  {:doc "Format code with cljstyle"
+   :task (do
+           (ensure-dirs!)
+           (mise! "cljstyle" "fix" "src" "dev" "test" "notebooks"))}
+
+  style-check
+  {:doc "Check formatting/style with cljstyle (src + test)"
+   :task (do
+           (ensure-dirs!)
+           (mise! "cljstyle" "check" "src" "test"))}
+
+
+  lint
+  {:doc "Lint production code (src + test) with clj-kondo"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clj-kondo" "--lint" "src" "--lint" "test"))}
+
+  lint-all
+  {:doc "Lint everything (src + test + dev + notebooks)"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clj-kondo" "--lint" "src"
+             "--lint" "test"
+             "--lint" "dev"
+             "--lint" "notebooks"))}
+
+
+  test
+  {:doc "Run tests (kaocha)"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clojure" "-M:test"))}
+  clerk
+  {:doc "Start Clerk (watch notebooks/)"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clojure" "-M:dev:clerk" "-m" "clerk"))}
+
+  clerk-export
+  {:doc "Export notebooks to static HTML in public/"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clojure" "-M:dev:clerk" "-m" "export-clerk"))}
+
+
+
+
+
+
+
+  style-check-all
+  {:doc "Check formatting/style with cljstyle (src + dev + test + notebooks)"
+   :task (do
+           (ensure-dirs!)
+           (mise! "cljstyle" "check" "src" "dev" "test" "notebooks"))}
+
+  check
+  {:doc "Run the full quality gate"
+   :task (do
+           (ensure-dirs!)
+           (run 'style-check)
+           (run 'lint)
+           (run 'test))}}}
+
