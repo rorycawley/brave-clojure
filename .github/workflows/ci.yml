@@ -39,5 +39,5 @@ jobs:
           mise ls
           mise exec -- bb --version
 
-      - name: Run build (quality gate + Clerk export)
-        run: mise exec -- bb build
+      - name: Run quality gate
+        run: mise exec -- bb check

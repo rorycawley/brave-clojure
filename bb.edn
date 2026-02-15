@@ -96,10 +96,10 @@
            (apply mise! "clojure" "-M:splint" source-dirs))}
 
   check
-  {:doc "Run the full quality gate"
+  {:doc "Run full quality gate (all dirs for style/lint, src+test for splint)"
    :task (do
-           (run 'style-check)
-           (run 'lint)
+           (run 'style-check-all)
+           (run 'lint-all)
            (run 'splint)
            (run 'test))}
 

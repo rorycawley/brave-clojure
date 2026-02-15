@@ -66,7 +66,7 @@ A typical session has two things running side by side: a **REPL** (for evaluatin
 
 ### Writing code
 
-3. **Open a notebook** — open a file in `notebooks/` (e.g. `ch00_template.clj`) in IntelliJ. This is a regular Clojure file. You write code here.
+3. **Open a notebook** — open a chapter file in `notebooks/` (e.g. `ch03_do_things_crash_course.clj`) in IntelliJ. This is a regular Clojure file. You write code here.
 4. **Evaluate with the REPL** — use Cursive's shortcuts to send forms to the REPL (e.g. Ctrl+Enter for a single form). You get instant feedback in the editor.
 5. **See rendered output in Clerk** — when you save the file, Clerk auto-reloads it in the browser. It shows the results of each form plus any `clerk/md` prose, formatted as a readable document.
 
@@ -76,13 +76,22 @@ The loop is: **write in the notebook, evaluate via REPL to test, save to see it 
 
 6. **Promote to src** — once code stabilises, extract functions into `src/brave/`. The notebook then `require`s and calls those functions, becoming documentation rather than scratch code.
 7. **Add tests** — write tests in `test/brave/` for promoted code.
-8. **Quality check** — `bb check` (style + lint + test) before committing.
+8. **Quality check** — `bb check` (style + lint + splint + test) before committing.
 
-### Adding a new chapter
+### Chapter notebook convention
 
-1. Copy `notebooks/ch00_template.clj` to `notebooks/chNN_topic.clj`
-2. Update the namespace to match
-3. Add the path to `dev/export_clerk.clj` for static builds
+Notebook export auto-discovers files matching:
+
+`notebooks/chNN_topic.clj`
+
+Where `NN` is a two-digit chapter number (`01` … `13`).
+No manual export list is needed.
+
+This repo ships one notebook per chapter:
+
+`ch01_building_running_and_repl.clj` through `ch13_multimethods_protocols_and_records.clj`.
+
+It also includes `notebooks/index.clj` as a table-of-contents homepage that links to all chapter notebooks.
 
 ### Individual commands
 
@@ -90,8 +99,9 @@ The loop is: **write in the notebook, evaluate via REPL to test, save to see it 
 bb clerk            # Start Clerk notebook server
 bb test             # Run tests via kaocha
 bb lint             # Lint with clj-kondo (src + test)
+bb lint-all         # Lint all code (src + test + dev + notebooks)
 bb fmt              # Auto-fix formatting (cljstyle)
-bb check            # Full quality gate (style → lint → test)
+bb check            # Full quality gate (style/lint all + splint + test)
 bb build            # Full build (check + clerk export)
 bb clean            # Remove build artifacts and caches
 ```
@@ -114,8 +124,8 @@ public/     generated static site (DO NOT EDIT)
 
 Every push to `main`:
 
-1. CI builds project
-2. Clerk exports notebooks
+1. CI runs quality checks (`bb check`)
+2. Pages workflow exports chapter notebooks (`bb clerk-export`)
 3. GitHub Pages publishes `public/`
 
 So your notebooks become a living website.
@@ -164,4 +174,3 @@ bb build
 ```
 
 Everything else is optional.
-

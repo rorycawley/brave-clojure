@@ -7,7 +7,7 @@
 ;; Reference: https://github.com/NoahTheDuke/splint
 
 {;; Global settings
- :output {:format :full}
+ :output "full"
 
  ;; ── Say what you mean: use the direct idiom ──────────────────────
  ;; (+ x 1) → (inc x),  (- x 1) → (dec x)
@@ -34,6 +34,10 @@
 
  ;; (if x x y) → (or x y)
  :style/if-to-or {:enabled true}
+
+ ;; Clerk analyzer currently does not support Clojure 1.12 method-value syntax.
+ ;; Keep traditional interop forms in source for compatibility.
+ lint/prefer-method-values {:enabled false}
 
  ;; ── Reduce needless wrapping ─────────────────────────────────────
  ;; (do (single-expr)) → (single-expr)

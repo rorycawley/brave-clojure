@@ -31,7 +31,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: m2-${{ runner.os }}-${{ hashFiles('deps.edn', 'bb.edn') }}
+          key: m2-${{ runner.os }}-${{ hashFiles('deps.edn', 'bb.edn', 'mise.lock', 'mise.toml') }}
           restore-keys: |
             m2-${{ runner.os }}-
 
@@ -39,7 +39,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .cpcache
-          key: cpcache-${{ runner.os }}-${{ hashFiles('deps.edn', 'bb.edn') }}
+          key: cpcache-${{ runner.os }}-${{ hashFiles('deps.edn', 'bb.edn', 'mise.lock', 'mise.toml') }}
           restore-keys: |
             cpcache-${{ runner.os }}-
 
@@ -47,8 +47,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Build (includes Clerk export to public/)
-        run: mise exec -- bb build
+      - name: Export chapter notebooks to public/
+        run: mise exec -- bb clerk-export
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

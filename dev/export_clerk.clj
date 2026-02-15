@@ -1,14 +1,14 @@
 (ns export-clerk
   (:require
+    [brave.notebooks :as notebooks]
     [nextjournal.clerk :as clerk]))
 
 
 (defn -main
   [& _]
-  (println "Exporting Clerk notebooks...")
-  (clerk/build!
-    {:paths ["notebooks/dashboard.clj"
-             "notebooks/ch00_template.clj"
-             "notebooks/ch01_clerk_examples.clj"]
-     :index "notebooks/dashboard.clj"
-     :out-path "public"}))
+  (println "Exporting notebooks (index + chapters)...")
+  (let [{:keys [paths index out-path] :as config} (notebooks/export-config)]
+    (println "Notebook count:" (count paths))
+    (println "Index notebook:" index)
+    (println "Output path:" out-path)
+    (clerk/build! config)))

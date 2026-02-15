@@ -24,9 +24,10 @@ backend = "github:greglook/cljstyle"
 "platforms.macos-x64" = { url = "https://github.com/greglook/cljstyle/releases/download/0.17.642/cljstyle_0.17.642_macos_amd64.zip", url_api = "https://api.github.com/repos/greglook/cljstyle/releases/assets/212214262"}
 
 [[tools.clojure]]
-version = "1.12.3.1577"
+version = "1.12.4.1602"
 backend = "asdf:clojure"
 
 [[tools.java]]
-version = "21.0.2"
+version = "corretto-21.0.10.7.1"
 backend = "core:java"
+"platforms.macos-arm64" = { checksum = "sha256:85541edd1793bce224aab4ac6d1fa80e84bf31bf9b64b5c5384e48b6ef07c76c", url = "https://corretto.aws/downloads/resources/21.0.10.7.1/amazon-corretto-21.0.10.7.1-macosx-aarch64.tar.gz"}

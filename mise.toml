@@ -1,9 +1,9 @@
 [tools]
-java = "21"
-clojure = "latest"
-babashka = "latest"
-clj-kondo = "latest"
-cljstyle = "latest"
+java = "corretto-21.0.10.7.1"
+clojure = "1.12.4.1602"
+babashka = "1.12.214"
+clj-kondo = "2026.01.19"
+cljstyle = "0.17.642"
 
 
 [env]

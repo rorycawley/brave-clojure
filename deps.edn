@@ -1,5 +1,8 @@
 {:paths ["src" "resources"]
 
+ :mvn/repos
+ {"clojars" {:url "https://repo.clojars.org/"}}
+
  :deps
  {org.clojure/clojure {:mvn/version "1.12.0"}}
 
@@ -18,5 +21,5 @@
    :main-opts ["-m" "kaocha.runner"]}
 
   :splint
-  {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.21.0"}}
+  {:extra-deps {io.github.noahtheduke/splint {:mvn/version "1.22.0"}}
    :main-opts ["-m" "noahtheduke.splint"]}}}
