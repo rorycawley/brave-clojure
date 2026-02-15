@@ -1,6 +1,6 @@
 # brave-clojure
 
-A reproducible Clojure development workflow with:
+A reproducible Clojure development workflow for working through [*Clojure for the Brave and True*](https://www.braveclojure.com/clojure-for-the-brave-and-true/).
 
 * **mise** — pinned toolchain (Java, Clojure, Babashka, linters)
 * **Babashka tasks** — simple build interface
@@ -10,10 +10,9 @@ A reproducible Clojure development workflow with:
 
 The goal is simple:
 
-> clone → install tools → run one command → everything works
+> clone, install tools, run one command, everything works
 
-No local setup drift.
-No “works on my machine”.
+No local setup drift. No "works on my machine".
 
 ---
 
@@ -49,61 +48,111 @@ This will:
 * run formatting checks
 * lint the code
 * run tests
-* export Clerk notebooks → `public/`
+* export Clerk notebooks to `public/`
 
 You now have a fully working environment.
 
 ---
 
-## 3. Development workflow
+## 3. The learning workflow
 
-A typical session has two things running side by side: a **REPL** (for evaluating code) and **Clerk** (for rendering notebooks in the browser). You write code in notebook files — they are normal `.clj` files that Clerk also knows how to render.
+This section explains how you actually use this project day-to-day as you read through the book. There are five stages, and they always happen in this order.
 
-### Starting a session
+### Stage 1: Read the book chapter
 
-1. **Start Clerk** — `bb clerk` in a terminal. Watches `notebooks/` and serves on [localhost:7777](http://localhost:7777). Keep running.
-2. **Start REPL** — use IntelliJ/Cursive jack-in (with `:dev` alias). This connects the editor to a running Clojure process so you can evaluate code from any file.
+Open the relevant chapter of [*Clojure for the Brave and True*](https://www.braveclojure.com/clojure-for-the-brave-and-true/) in your browser or book. Read through the concepts and examples before (or alongside) writing code.
 
-### Writing code
+### Stage 2: Experiment in a notebook
 
-3. **Open a notebook** — open a chapter file in `notebooks/` (e.g. `ch03_do_things_crash_course.clj`) in IntelliJ. This is a regular Clojure file. You write code here.
-4. **Evaluate with the REPL** — use Cursive's shortcuts to send forms to the REPL (e.g. Ctrl+Enter for a single form). You get instant feedback in the editor.
-5. **See rendered output in Clerk** — when you save the file, Clerk auto-reloads it in the browser. It shows the results of each form plus any `clerk/md` prose, formatted as a readable document.
+Each chapter has a corresponding notebook file:
 
-The loop is: **write in the notebook, evaluate via REPL to test, save to see it rendered in Clerk**.
+```
+notebooks/ch03_do_things_crash_course.clj
+notebooks/ch04_core_functions_in_depth.clj
+...
+```
 
-### Graduating code to src
+Open the chapter's notebook in your editor. This is a normal `.clj` file — you write Clojure code here just like any other source file. The difference is that Clerk knows how to render it as a document with prose and evaluated results.
 
-6. **Promote to src** — once code stabilises, extract functions into `src/brave/`. The notebook then `require`s and calls those functions, becoming documentation rather than scratch code.
-7. **Add tests** — write tests in `test/brave/` for promoted code.
-8. **Quality check** — `bb check` (style + lint + splint + test) before committing.
+**This is where all your experimentation happens.** Type the examples from the book, tweak them, break them, try your own variations. The notebook is your scratchpad and your notes combined.
 
-### Chapter notebook convention
+### Stage 3: Get live feedback with Clerk
 
-Notebook export auto-discovers files matching:
-
-`notebooks/chNN_topic.clj`
-
-Where `NN` is a two-digit chapter number (`01` … `13`).
-No manual export list is needed.
-
-This repo ships one notebook per chapter:
-
-`ch01_building_running_and_repl.clj` through `ch13_multimethods_protocols_and_records.clj`.
-
-It also includes `notebooks/index.clj` as a table-of-contents homepage that links to all chapter notebooks.
-
-### Individual commands
+In a terminal, start Clerk:
 
 ```bash
-bb clerk            # Start Clerk notebook server
-bb test             # Run tests via kaocha
-bb lint             # Lint with clj-kondo (src + test)
-bb lint-all         # Lint all code (src + test + dev + notebooks)
-bb fmt              # Auto-fix formatting (cljstyle)
-bb check            # Full quality gate (style/lint all + splint + test)
-bb build            # Full build (check + clerk export)
-bb clean            # Remove build artifacts and caches
+bb clerk
+```
+
+This opens a browser at [localhost:7777](http://localhost:7777). Clerk watches the `notebooks/` directory. Every time you **save** a notebook file, Clerk re-evaluates all the code in it and renders the results in the browser.
+
+**Why this matters:** you see every expression's return value, formatted nicely, alongside any prose you wrote with `clerk/md`. It turns your notebook into a living document — part code, part explanation, part results.
+
+Keep this terminal running for your entire session.
+
+### Stage 4: (Optional) Use the REPL for quick checks
+
+If Clerk is your main feedback tool, the REPL is your secondary one. Start it with:
+
+```bash
+bb dev-repl
+```
+
+Or use your editor's jack-in feature (e.g. IntelliJ/Cursive, Emacs/CIDER, VS Code/Calva).
+
+**When to use the REPL instead of Clerk:**
+
+- You want to test a single expression without saving the file
+- You want to inspect a value interactively (e.g. check the type, keys of a map)
+- You are debugging code in `src/brave/` and want to call functions directly
+- You want to use `(refresh)` from `dev/user.clj` to reload changed namespaces
+
+**You do not need the REPL to follow the book.** Clerk alone is enough for most chapter work. The REPL is there when you want faster, more targeted feedback.
+
+### Stage 5: Graduate stable code to `src/`
+
+As you work through chapters, some code will become reusable — a helper function, a data transformation, something you want to call from multiple notebooks or test properly. When that happens:
+
+1. **Create a namespace in `src/brave/`** — for example `src/brave/exercises.clj` with namespace `brave.exercises`
+2. **Move the stable functions there** — cut them from the notebook, paste into the src file
+3. **Require from the notebook** — add `[brave.exercises :as ex]` to the notebook's `:require` and call the functions
+4. **Write tests** — add a corresponding test file `test/brave/exercises_test.clj`
+5. **Run quality checks** — `bb check` (formatting, linting, style, tests)
+
+**The key idea:** notebooks are for exploration and documentation. `src/` is for code that has graduated from exploration to something you trust and want to keep. Not everything needs to move — simple one-off examples can stay in the notebook forever.
+
+---
+
+## The workflow at a glance
+
+```
+Read book chapter
+       |
+       v
+notebooks/chNN_*.clj      <-- write and experiment here
+       |
+       v
+bb clerk (localhost:7777)  <-- see live results in browser
+       |
+       v
+(optional) REPL            <-- quick interactive checks
+       |
+       v
+Code stabilises?
+  |           |
+  No          Yes
+  |           |
+  v           v
+ Done    Move to src/brave/*.clj
+              |
+              v
+         Add test/brave/*_test.clj
+              |
+              v
+         bb check          <-- formatting + lint + style + tests
+              |
+              v
+         git commit
 ```
 
 ---
@@ -111,16 +160,48 @@ bb clean            # Remove build artifacts and caches
 ## 4. Project structure
 
 ```
-src/        production code
-dev/        development entrypoints (Clerk, tooling)
-test/       tests
-notebooks/  Clerk notebooks (source of documentation)
-public/     generated static site (DO NOT EDIT)
+notebooks/  Clerk notebooks — one per chapter, this is where you work
+src/        Production code — stable functions extracted from notebooks
+test/       Tests for code in src/
+dev/        Development helpers (Clerk server, REPL utilities)
+public/     Generated static site (DO NOT EDIT — built by Clerk export)
+```
+
+### Chapter notebook convention
+
+Notebook export auto-discovers files matching `notebooks/chNN_topic.clj` where `NN` is a two-digit chapter number (`01` to `13`). No manual export list is needed.
+
+`notebooks/index.clj` is the table-of-contents homepage that links to all chapter notebooks.
+
+---
+
+## 5. Commands reference
+
+```bash
+# Start your session
+bb clerk            # Start Clerk notebook server (localhost:7777)
+bb dev-repl         # Start Clojure REPL with dev deps
+
+# Quality checks (run before committing)
+bb check            # Full gate: style + lint + splint + test
+bb fmt              # Auto-fix formatting (cljstyle)
+bb style-check      # Check formatting without fixing (src + test)
+bb lint             # Lint with clj-kondo (src + test)
+bb lint-all         # Lint all code (src + test + dev + notebooks)
+bb splint           # Check idiomatic style with Splint
+bb test             # Run tests via kaocha
+
+# Run a single test
+bb test --focus brave.notebooks-test/export-config-test
+
+# Build and clean
+bb build            # Full build (check + clerk export)
+bb clean            # Remove build artifacts and caches
 ```
 
 ---
 
-## 5. Static documentation site
+## 6. Static documentation site
 
 Every push to `main`:
 
@@ -128,11 +209,11 @@ Every push to `main`:
 2. Pages workflow exports chapter notebooks (`bb clerk-export`)
 3. GitHub Pages publishes `public/`
 
-So your notebooks become a living website.
+So your notebooks become a living website — your personal annotated version of the book.
 
 ---
 
-## 6. Logging
+## 7. Logging
 
 SLF4J simple logger is enabled automatically.
 
@@ -148,29 +229,10 @@ Example:
 
 ---
 
-## 7. Philosophy of this repo
+## 8. Philosophy
 
-This project is intentionally opinionated:
-
-* Toolchain is pinned (mise)
-* Tasks are explicit (babashka)
-* Docs are executable (Clerk)
-* CI equals local build
-* The notebook is the product
-
-You should never need to ask:
-
-> "how do I run this?"
-
----
-
-## 8. One-command mental model
-
-After cloning:
-
-```bash
-mise install
-bb build
-```
-
-Everything else is optional.
+* Toolchain is pinned (mise) — everyone gets the same versions
+* Tasks are explicit (babashka) — no hidden scripts or aliases
+* Docs are executable (Clerk) — if the notebook renders, the code works
+* CI equals local build — `bb check` runs the same checks locally and in CI
+* The notebook is the product — everything else supports it
