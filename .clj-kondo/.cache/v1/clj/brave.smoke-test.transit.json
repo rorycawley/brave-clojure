@@ -1,1 +1,1 @@
-["^ ","~$smoke",["^ ","~:row",6,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$brave.smoke-test","~:top-ns","^7","~:arities",["^ ","~i0",["^ ","~:ret","~:boolean"]]],"~:filename","test/brave/smoke_test.clj"]
+["^ ","~$smoke",["^ ","~:row",7,"~:col",1,"~:fixed-arities",["~#set",[0]],"~:name","^0","~:ns","~$brave.smoke-test","~:top-ns","^7","~:arities",["^ ","~i0",["^ ","~:ret","~:boolean"]]],"~$hello-test",["^ ","^1",12,"^2",1,"^3",["^4",[0]],"^5","^<","^6","^7","^8","^7","^9",["^ ","~i0",["^ ","^:","^;"]]],"~:filename","test/brave/smoke_test.clj"]

@@ -1,7 +1,14 @@
 (ns brave.smoke-test
   (:require
-    [clojure.test :refer [deftest is]]))
+    [brave.scratch :as scratch]
+    [clojure.test :refer [deftest is testing]]))
 
 
 (deftest smoke
-  (is (= 2 (+ 1 1))))
+  (testing "basic sanity check"
+    (is (= 2 (inc 1)))))
+
+
+(deftest hello-test
+  (testing "hello returns greeting message"
+    (is (= "Hello, Brave Clojure!" (scratch/hello)))))

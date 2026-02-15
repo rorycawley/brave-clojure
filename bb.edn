@@ -3,6 +3,8 @@
              [babashka.process :as p])
 
   :init (do
+          (def source-dirs ["src" "dev" "test" "notebooks"])
+
           (defn sh!
             "Run a command and stream stdout/stderr. Throws on non-zero."
             [& args]
@@ -13,12 +15,12 @@
               res))
 
           (defn ensure-dirs! []
-            (doseq [d ["src" "dev" "test" "notebooks"]]
+            (doseq [d source-dirs]
               (when-not (fs/exists? d)
                 (println "Missing required folder:" d)
                 (System/exit 2))))
 
-          ;; Always run tools using mise’s pinned versions
+          ;; Always run tools using mise's pinned versions
           (defn mise! [& cmd]
             (apply sh! "mise" "exec" "--" cmd)))
 
@@ -28,13 +30,11 @@
            (run 'check)
            (run 'clerk-export))}
 
-
-
   fmt
   {:doc "Format code with cljstyle"
    :task (do
            (ensure-dirs!)
-           (mise! "cljstyle" "fix" "src" "dev" "test" "notebooks"))}
+           (apply mise! "cljstyle" "fix" source-dirs))}
 
   style-check
   {:doc "Check formatting/style with cljstyle (src + test)"
@@ -42,6 +42,11 @@
            (ensure-dirs!)
            (mise! "cljstyle" "check" "src" "test"))}
 
+  style-check-all
+  {:doc "Check formatting/style with cljstyle (all directories)"
+   :task (do
+           (ensure-dirs!)
+           (apply mise! "cljstyle" "check" source-dirs))}
 
   lint
   {:doc "Lint production code (src + test) with clj-kondo"
@@ -58,41 +63,56 @@
              "--lint" "dev"
              "--lint" "notebooks"))}
 
-
   test
   {:doc "Run tests (kaocha)"
    :task (do
            (ensure-dirs!)
            (mise! "clojure" "-M:test"))}
+
   clerk
   {:doc "Start Clerk (watch notebooks/)"
    :task (do
            (ensure-dirs!)
-           (mise! "clojure" "-M:dev:clerk" "-m" "clerk"))}
+           (mise! "clojure" "-M:dev" "-m" "clerk"))}
 
   clerk-export
   {:doc "Export notebooks to static HTML in public/"
    :task (do
            (ensure-dirs!)
-           (mise! "clojure" "-M:dev:clerk" "-m" "export-clerk"))}
+           (fs/delete-tree "public")
+           (fs/create-dirs "public")
+           (mise! "clojure" "-M:dev" "-m" "export-clerk"))}
 
-
-
-
-
-
-
-  style-check-all
-  {:doc "Check formatting/style with cljstyle (src + dev + test + notebooks)"
+  splint
+  {:doc "Check for idiomatic Clojure style with Splint (src + test)"
    :task (do
            (ensure-dirs!)
-           (mise! "cljstyle" "check" "src" "dev" "test" "notebooks"))}
+           (mise! "clojure" "-M:splint" "src" "test"))}
+
+  splint-all
+  {:doc "Check idiomatic style with Splint (all directories)"
+   :task (do
+           (ensure-dirs!)
+           (apply mise! "clojure" "-M:splint" source-dirs))}
 
   check
   {:doc "Run the full quality gate"
    :task (do
-           (ensure-dirs!)
            (run 'style-check)
            (run 'lint)
-           (run 'test))}}}
+           (run 'splint)
+           (run 'test))}
 
+  clean
+  {:doc "Clean build artifacts and caches"
+   :task (do
+           (doseq [dir ["public" ".cpcache" "target" ".clj-kondo/.cache"]]
+             (when (fs/exists? dir)
+               (println "Removing:" dir)
+               (fs/delete-tree dir))))}
+
+  dev-repl
+  {:doc "Start a REPL with dev dependencies"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clojure" "-M:dev"))}}}

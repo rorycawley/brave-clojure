@@ -1,0 +1,69 @@
+;; Splint — idiomatic Clojure style checks
+;; Aligns with "Elements of Clojure" principles:
+;;   - Say what you mean (use the most direct idiom)
+;;   - Reduce unnecessary indirection
+;;   - Keep expressions simple and readable
+;;
+;; Reference: https://github.com/NoahTheDuke/splint
+
+{;; Global settings
+ :output {:format :full}
+
+ ;; ── Say what you mean: use the direct idiom ──────────────────────
+ ;; (+ x 1) → (inc x),  (- x 1) → (dec x)
+ :style/plus-one   {:enabled true}
+ :style/minus-one  {:enabled true}
+
+ ;; (first (filter pred coll)) → (some pred coll)
+ :style/first-filter {:enabled true}
+
+ ;; (apply str coll) → (clojure.string/join coll)
+ :style/apply-str {:enabled true}
+
+ ;; (when (not x) ...) → (when-not x ...)
+ :style/when-not-call {:enabled true}
+
+ ;; (if (not x) ...) → (if-not x ...)
+ :style/if-not-call {:enabled true}
+
+ ;; (not (= ...)) → (not= ...)
+ :style/not-eq {:enabled true}
+
+ ;; (not (nil? x)) → (some? x)
+ :style/not-nil? {:enabled true}
+
+ ;; (if x x y) → (or x y)
+ :style/if-to-or {:enabled true}
+
+ ;; ── Reduce needless wrapping ─────────────────────────────────────
+ ;; (do (single-expr)) → (single-expr)
+ :style/single-do {:enabled true}
+
+ ;; (when true-thing (do ...)) → (when true-thing ...)
+ :style/when-do {:enabled true}
+
+ ;; (let [] body) → body
+ :style/redundant-let {:enabled true}
+
+ ;; (fn [x] (f x)) → f  (eta reduction)
+ :style/fn-wrapper {:enabled true}
+
+ ;; ── Prefer threading for clarity ─────────────────────────────────
+ ;; (f (g (h x))) → (-> x h g f)  when deeply nested
+ :style/prefer-condp {:enabled true}
+
+ ;; ── Naming & conventions ─────────────────────────────────────────
+ ;; (= nil x) → (nil? x)
+ :style/eq-nil {:enabled true}
+
+ ;; (= 0 (count coll)) → (empty? coll)
+ :style/eq-zero-count {:enabled true}
+
+ ;; (.toString x) → (str x)
+ :style/to-string {:enabled true}
+
+ ;; (into [] ...) → (vec ...)  when simpler
+ :style/into-vector {:enabled true}
+
+ ;; (into #{} ...) → (set ...)  when simpler
+ :style/into-set {:enabled true}}

@@ -11,6 +11,10 @@ pom.xml.asc
 .lein-plugins/
 .lein-failures
 .nrepl-port
+*.iml
 .cpcache/
+.clj-kondo/.cache/
+.clerk/
+.mise.local.toml
 
 /public

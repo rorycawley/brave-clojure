@@ -1,5 +1,7 @@
 (ns ch00-template
-  (:require [nextjournal.clerk :as clerk]))
+  (:require
+    [nextjournal.clerk :as clerk]))
+
 
 (clerk/md "# Chapter 00 — Template")
 

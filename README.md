@@ -23,6 +23,8 @@ You only need **mise**.
 
 [https://mise.jdx.dev/getting-started.html](https://mise.jdx.dev/getting-started.html)
 
+Add `mise activate` to your shell config (e.g. `~/.zshrc`) so that pinned tool versions are available directly — no `mise exec --` prefix needed.
+
 Verify:
 
 ```bash
@@ -37,7 +39,7 @@ From the project root:
 
 ```bash
 mise install
-mise exec -- bb build
+bb build
 ```
 
 This will:
@@ -55,64 +57,43 @@ You now have a fully working environment.
 
 ## 3. Development workflow
 
-### Start interactive notebooks
+A typical session has two things running side by side: a **REPL** (for evaluating code) and **Clerk** (for rendering notebooks in the browser). You write code in notebook files — they are normal `.clj` files that Clerk also knows how to render.
+
+### Starting a session
+
+1. **Start Clerk** — `bb clerk` in a terminal. Watches `notebooks/` and serves on [localhost:7777](http://localhost:7777). Keep running.
+2. **Start REPL** — use IntelliJ/Cursive jack-in (with `:dev` alias). This connects the editor to a running Clojure process so you can evaluate code from any file.
+
+### Writing code
+
+3. **Open a notebook** — open a file in `notebooks/` (e.g. `ch00_template.clj`) in IntelliJ. This is a regular Clojure file. You write code here.
+4. **Evaluate with the REPL** — use Cursive's shortcuts to send forms to the REPL (e.g. Ctrl+Enter for a single form). You get instant feedback in the editor.
+5. **See rendered output in Clerk** — when you save the file, Clerk auto-reloads it in the browser. It shows the results of each form plus any `clerk/md` prose, formatted as a readable document.
+
+The loop is: **write in the notebook, evaluate via REPL to test, save to see it rendered in Clerk**.
+
+### Graduating code to src
+
+6. **Promote to src** — once code stabilises, extract functions into `src/brave/`. The notebook then `require`s and calls those functions, becoming documentation rather than scratch code.
+7. **Add tests** — write tests in `test/brave/` for promoted code.
+8. **Quality check** — `bb check` (style + lint + test) before committing.
+
+### Adding a new chapter
+
+1. Copy `notebooks/ch00_template.clj` to `notebooks/chNN_topic.clj`
+2. Update the namespace to match
+3. Add the path to `dev/export_clerk.clj` for static builds
+
+### Individual commands
 
 ```bash
-mise exec -- bb clerk
-```
-
-Open:
-
-```
-http://localhost:7777
-```
-
-The `notebooks/` folder auto-reloads.
-
----
-
-### Run tests
-
-```bash
-mise exec -- bb test
-```
-
----
-
-### Lint code
-
-```bash
-mise exec -- bb lint
-```
-
----
-
-### Format code
-
-```bash
-mise exec -- bb fmt
-```
-
----
-
-### Full quality gate
-
-```bash
-mise exec -- bb check
-```
-
----
-
-### Full build (same as CI)
-
-```bash
-mise exec -- bb build
-```
-
-Runs:
-
-```
-format → lint → test → export notebooks
+bb clerk            # Start Clerk notebook server
+bb test             # Run tests via kaocha
+bb lint             # Lint with clj-kondo (src + test)
+bb fmt              # Auto-fix formatting (cljstyle)
+bb check            # Full quality gate (style → lint → test)
+bb build            # Full build (check + clerk export)
+bb clean            # Remove build artifacts and caches
 ```
 
 ---
@@ -179,7 +160,7 @@ After cloning:
 
 ```bash
 mise install
-mise exec -- bb build
+bb build
 ```
 
 Everything else is optional.

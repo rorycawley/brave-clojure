@@ -1,14 +1,14 @@
 (ns export-clerk
-  (:require [babashka.fs :as fs]
-            [nextjournal.clerk :as clerk]))
+  (:require
+    [nextjournal.clerk :as clerk]))
 
-(defn- notebook-files []
-  (->> (fs/glob "notebooks" "*.clj")
-       (map str)
-       sort))
 
-(defn -main [& _]
-  (let [paths (notebook-files)]
-    (println "Exporting notebooks:" paths)
-    (clerk/build! {:paths paths
-                   :out-path "public"})))
+(defn -main
+  [& _]
+  (println "Exporting Clerk notebooks...")
+  (clerk/build!
+    {:paths ["notebooks/dashboard.clj"
+             "notebooks/ch00_template.clj"
+             "notebooks/ch01_clerk_examples.clj"]
+     :index "notebooks/dashboard.clj"
+     :out-path "public"}))
