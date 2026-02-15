@@ -23,6 +23,7 @@
   "### Hello from Clerk!
 This is **bold**, this is *italic*, and this is `inline code`.")
 
+
 (comment
   ;; Headers
   (clerk/md "# Heading 1\n## Heading 2\n### Heading 3")
@@ -69,6 +70,7 @@ renders everything in the browser.
   "(defn factorial [n]
   (reduce * 1 (range 1 (inc n))))")
 
+
 (comment
   ;; Show syntax-highlighted code without evaluating it
   (clerk/code "(+ 1 2 3)")
@@ -95,6 +97,7 @@ renders everything in the browser.
   [{:language "Clojure" :creator "Rich Hickey" :year 2007}
    {:language "Elixir" :creator "José Valim" :year 2011}
    {:language "Rust" :creator "Graydon Hoare" :year 2010}])
+
 
 (comment
   ;; Seq of maps (most common)
@@ -135,6 +138,7 @@ renders everything in the browser.
                  :border "1px solid #c0d0ff"}}
    [:h3 "Hello from Hiccup!"]
    [:p "Clerk can render arbitrary " [:strong "HTML"] " via Hiccup vectors."]])
+
 
 (comment
   ;; Styled text
@@ -186,6 +190,7 @@ renders everything in the browser.
            :marker {:color ["#4a90d9" "#e6a817" "#dea584" "#69d2e7"]}}]
    :layout {:title "Language Satisfaction"
             :yaxis {:title "Score"}}})
+
 
 (comment
   ;; Line chart
@@ -249,6 +254,7 @@ renders everything in the browser.
               :y {:field "amount" :type "quantitative" :title "Amount"}
               :color {:field "category" :type "nominal"}}})
 
+
 (comment
   ;; Scatter plot with Vega-Lite
   (clerk/vl
@@ -292,6 +298,7 @@ renders everything in the browser.
 
 (clerk/tex "E = mc^2")
 
+
 (comment
   ;; Quadratic formula
   (clerk/tex "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}")
@@ -319,6 +326,7 @@ renders everything in the browser.
                    :alt "Clojure logo"
                    :width 120}])
 
+
 (comment
   ;; Another image from URL
   (clerk/image "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/24701-nature-702-702.jpg/320px-24701-nature-702-702.jpg")
@@ -332,6 +340,7 @@ renders everything in the browser.
 (clerk/row
   (clerk/md "**Left panel**")
   (clerk/md "**Right panel**"))
+
 
 (comment
   ;; Side-by-side charts
@@ -384,6 +393,7 @@ renders everything in the browser.
 ^{:nextjournal.clerk/visibility {:code :hide}}
 (clerk/md "_This markdown appears without its source code visible above it._")
 
+
 (comment
   ;; Hide result, show code:
   ;; ^{:nextjournal.clerk/visibility {:result :hide}}
@@ -406,6 +416,7 @@ renders everything in the browser.
   (+ 1 2 3)
   (map inc [1 2 3])
   (str "Hello, " "Clerk!"))
+
 
 (comment
   (clerk/example
