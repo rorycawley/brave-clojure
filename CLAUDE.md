@@ -22,8 +22,11 @@ bb build
 # Individual steps
 bb fmt              # Auto-fix formatting (cljstyle)
 bb style-check      # Check formatting (src + test only)
+bb style-check-all  # Check formatting (all directories)
 bb lint             # Lint with clj-kondo (src + test)
+bb lint-all         # Lint all code (src + test + dev + notebooks)
 bb splint           # Check idiomatic style with Splint (src + test)
+bb splint-all       # Check idiomatic style (all directories)
 bb test             # Run tests via kaocha
 
 # Run a single test (kaocha focus)
@@ -34,6 +37,22 @@ bb clerk            # Start Clerk notebook server on port 7777
 bb dev-repl         # Start Clojure REPL with dev deps on classpath
 bb clean            # Remove build artifacts and caches
 ```
+
+## REPL Workflow with Notebooks
+
+`bb dev-repl` (i.e. `clojure -M:dev`) starts a REPL with `notebooks/` on the classpath. To work with a notebook interactively:
+
+```clojure
+;; Load a notebook namespace into the REPL
+(require 'ch03-do-things-crash-course :reload)
+
+;; Or switch into it so you can eval forms directly
+(in-ns 'ch03-do-things-crash-course)
+```
+
+With **editor jack-in** (Cursive, CIDER, Calva), open the notebook file and evaluate forms inline — no manual `require` needed. The editor connects to a REPL started with the `:dev` alias, which already has `notebooks/` on the classpath.
+
+The intended workflow: write code in the notebook file, eval individual forms via the REPL for instant feedback, and save the file for Clerk to render the whole document in the browser.
 
 ## Architecture
 
@@ -60,3 +79,13 @@ bb clean            # Remove build artifacts and caches
 ## CI/CD
 
 GitHub Actions runs `bb check` on push to main and PRs. A separate workflow runs `bb clerk-export` and publishes to GitHub Pages.
+
+## Logging
+
+SLF4J simple logger is enabled automatically. Use `org.slf4j.LoggerFactory` to create loggers:
+
+```clojure
+(import 'org.slf4j.LoggerFactory)
+(def log (LoggerFactory/getLogger "demo"))
+(.info log "Hello logs")
+```
