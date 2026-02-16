@@ -48,14 +48,23 @@
            (ensure-dirs!)
            (apply mise! "cljstyle" "check" source-dirs))}
 
+  lint-init
+  {:doc "Copy library lint configs into .clj-kondo/imports"
+   :task (do
+           (ensure-dirs!)
+           (mise! "clj-kondo" "--copy-configs" "--dependencies" "--lint"
+             (clojure.string/trim (:out (p/shell {:out :string} "mise" "exec" "--" "clojure" "-A:dev" "-Spath")))))}
+
   lint
   {:doc "Lint production code (src + test) with clj-kondo"
+   :depends [lint-init]
    :task (do
            (ensure-dirs!)
            (mise! "clj-kondo" "--lint" "src" "--lint" "test"))}
 
   lint-all
   {:doc "Lint everything (src + test + dev + notebooks)"
+   :depends [lint-init]
    :task (do
            (ensure-dirs!)
            (mise! "clj-kondo" "--lint" "src"
