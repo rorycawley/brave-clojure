@@ -17,3 +17,11 @@
 
 (clerk/md "## Scratch")
 (+ 1 2 3)
+(map inc [1 2 3 4])
+(reduce + [5 6 100])
+(println "Cleanliness is next to godliness")
+(defn train
+  []
+  (println "Choo choo!"))
+(train)
+

@@ -56,13 +56,31 @@ You now have a fully working environment.
 
 ## 3. The learning workflow
 
-This section explains how you actually use this project day-to-day as you read through the book. There are five stages, and they always happen in this order.
+This section explains how you actually use this project day-to-day as you read through the book.
 
-### Stage 1: Read the book chapter
+### Setup: Start your session
 
-Open the relevant chapter of [*Clojure for the Brave and True*](https://www.braveclojure.com/clojure-for-the-brave-and-true/) in your browser or book. Read through the concepts and examples before (or alongside) writing code.
+Before you begin a chapter, get two things running:
 
-### Stage 2: Experiment in a notebook
+1. **Start Clerk** in a terminal — keep it running for your entire session:
+
+```bash
+bb clerk
+```
+
+This opens a browser at [localhost:7777](http://localhost:7777). Clerk watches the `notebooks/` directory.
+
+2. **Connect a REPL** from your editor using jack-in (IntelliJ/Cursive, Emacs/CIDER, VS Code/Calva). Alternatively, start a standalone REPL with `bb dev-repl`.
+
+You now have two complementary feedback loops:
+- **REPL** — instant feedback on individual expressions (no save needed)
+- **Clerk** — rendered document view of the whole notebook (on save)
+
+### Step 1: Read the book chapter
+
+Open the relevant chapter of [*Clojure for the Brave and True*](https://www.braveclojure.com/clojure-for-the-brave-and-true/) in your browser or book. Read through the concepts and examples.
+
+### Step 2: Write code in the notebook
 
 Each chapter has a corresponding notebook file:
 
@@ -72,44 +90,28 @@ notebooks/ch04_core_functions_in_depth.clj
 ...
 ```
 
-Open the chapter's notebook in your editor. This is a normal `.clj` file — you write Clojure code here just like any other source file. The difference is that Clerk knows how to render it as a document with prose and evaluated results.
+Open the chapter's notebook in your editor. Write code **directly in the notebook file** — this is a normal `.clj` file that Clerk knows how to render as a document with prose and evaluated results.
 
 **This is where all your experimentation happens.** Type the examples from the book, tweak them, break them, try your own variations. The notebook is your scratchpad and your notes combined.
 
-### Stage 3: Get live feedback with Clerk
+### Step 3: Get feedback with REPL and Clerk
 
-In a terminal, start Clerk:
+As you write code in the notebook, use both feedback loops:
 
-```bash
-bb clerk
+- **Evaluate inline with the REPL** — place your cursor on an expression and eval it (the keybinding depends on your editor). You get the result instantly, without saving. This is your primary tool for trying things out.
+- **Save the file for Clerk** — when you want to see the whole notebook rendered with all results, prose (`clerk/md`), and formatting, save the file. Clerk re-evaluates everything and updates the browser.
+
+**The REPL and Clerk are complementary, not alternatives.** The REPL is for rapid per-expression feedback while you write. Clerk is for seeing the bigger picture — your notebook as a living document. You don't write in the REPL and copy to the notebook; you write once in the notebook and use the REPL to evaluate expressions in place.
+
+### Step 4: Back to the book
+
+Read the next section, write more code, evaluate, save, repeat. The cycle is:
+
+```
+Read → Write in notebook → Eval with REPL → Save for Clerk → Read more
 ```
 
-This opens a browser at [localhost:7777](http://localhost:7777). Clerk watches the `notebooks/` directory. Every time you **save** a notebook file, Clerk re-evaluates all the code in it and renders the results in the browser.
-
-**Why this matters:** you see every expression's return value, formatted nicely, alongside any prose you wrote with `clerk/md`. It turns your notebook into a living document — part code, part explanation, part results.
-
-Keep this terminal running for your entire session.
-
-### Stage 4: (Optional) Use the REPL for quick checks
-
-If Clerk is your main feedback tool, the REPL is your secondary one. Start it with:
-
-```bash
-bb dev-repl
-```
-
-Or use your editor's jack-in feature (e.g. IntelliJ/Cursive, Emacs/CIDER, VS Code/Calva).
-
-**When to use the REPL instead of Clerk:**
-
-- You want to test a single expression without saving the file
-- You want to inspect a value interactively (e.g. check the type, keys of a map)
-- You are debugging code in `src/brave/` and want to call functions directly
-- You want to use `(refresh)` from `dev/user.clj` to reload changed namespaces
-
-**You do not need the REPL to follow the book.** Clerk alone is enough for most chapter work. The REPL is there when you want faster, more targeted feedback.
-
-### Stage 5: Graduate stable code to `src/`
+### Step 5: Graduate stable code to `src/`
 
 As you work through chapters, some code will become reusable — a helper function, a data transformation, something you want to call from multiple notebooks or test properly. When that happens:
 
@@ -126,33 +128,40 @@ As you work through chapters, some code will become reusable — a helper functi
 ## The workflow at a glance
 
 ```
-Read book chapter
-       |
-       v
-notebooks/chNN_*.clj      <-- write and experiment here
-       |
-       v
-bb clerk (localhost:7777)  <-- see live results in browser
-       |
-       v
-(optional) REPL            <-- quick interactive checks
-       |
-       v
-Code stabilises?
-  |           |
-  No          Yes
-  |           |
-  v           v
- Done    Move to src/brave/*.clj
-              |
-              v
-         Add test/brave/*_test.clj
-              |
-              v
-         bb check          <-- formatting + lint + style + tests
-              |
-              v
-         git commit
+               Start session
+              /             \
+        bb clerk        REPL jack-in
+     (localhost:7777)   (editor-connected)
+              \             /
+               v           v
+           Read book chapter
+                  |
+                  v
+       Write code in notebooks/chNN_*.clj
+              /             \
+    Eval inline (REPL)   Save file (Clerk)
+    instant per-expr     rendered document
+    feedback             in browser
+              \             /
+               v           v
+           Read next section...
+                  |
+                  v
+            Code stabilises?
+             |           |
+             No          Yes
+             |           |
+             v           v
+           Done    Move to src/brave/*.clj
+                        |
+                        v
+                   Add test/brave/*_test.clj
+                        |
+                        v
+                   bb check
+                        |
+                        v
+                   git commit
 ```
 
 ---
@@ -178,9 +187,9 @@ Notebook export auto-discovers files matching `notebooks/chNN_topic.clj` where `
 ## 5. Commands reference
 
 ```bash
-# Start your session
+# Start your session (both recommended)
 bb clerk            # Start Clerk notebook server (localhost:7777)
-bb dev-repl         # Start Clojure REPL with dev deps
+bb dev-repl         # Start Clojure REPL with dev deps (or use editor jack-in)
 
 # Quality checks (run before committing)
 bb check            # Full gate: style + lint + splint + test
